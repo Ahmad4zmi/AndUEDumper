@@ -10,14 +10,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Grant execute permission for Gradle
-        run: chmod +x ./gradlew
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
 
-      - name: Build project with Gradle
-        run: ./gradlew :module:assembleRelease
+      - name: Configure CMake
+        run: cmake -S . -B build
+
+      - name: Build project
+        run: cmake --build build --config Release -j$(nproc)
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: UE4Dumper
-          path: out/magisk_module_release/
+          path: build/
